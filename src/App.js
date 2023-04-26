@@ -34,7 +34,7 @@ function App() {
 	const getBooksToShow = () => {
 		let sortedBooks = bookResult;
 		if (sortedBy) {
-			sortedBooks = bookResult.sort((a, b) => {
+			sortedBooks = bookResult?.sort((a, b) => {
 				if (a[sortedBy] < b[sortedBy]) {
 					return sortOrder === "asc" ? -1 : 1;
 				}
@@ -115,7 +115,7 @@ function App() {
 
 	const getTableRows = () => {
 		return (
-			<tbody>
+			<tbody data-testid="book-row">
 				{getBooksToShow()?.map((book, idx) => {
 					const { title, cover, author_name, publish_date } = book;
 					return (
@@ -157,50 +157,60 @@ function App() {
 				</button>
 			</div>
 
-			{(getBooksToShow()?.length > 0 && !loading && (
-				<div className="table-container">
-					<table>
-						<colgroup>
-							<col span="1" style={{ width: "30%" }} />
-							<col span="1" style={{ width: "20%" }} />
-							<col span="1" style={{ width: "25%" }} />
-							<col span="1" style={{ width: "25%" }} />
-						</colgroup>
-						{getTableHeader()}
-						{getTableRows()}
-					</table>
-					<div className="pagination-container">
-						<ul className="pagination">
-							{pageNumbers.map((number) => {
-								return (
-									<li
-										key={number}
-										id={number}
-										onClick={handlePageClick}
-										className={
-											currentPage === number
-												? "active"
-												: null
-										}
-									>
-										{number}
-									</li>
-								);
-							})}
-						</ul>
-					</div>
+			<div
+				className="table-container"
+				style={{
+					display:
+						getBooksToShow()?.length > 0 && !loading
+							? "block"
+							: "none"
+				}}
+			>
+				<table data-testid="book-table">
+					<colgroup>
+						<col span="1" style={{ width: "30%" }} />
+						<col span="1" style={{ width: "20%" }} />
+						<col span="1" style={{ width: "25%" }} />
+						<col span="1" style={{ width: "25%" }} />
+					</colgroup>
+					{getTableHeader()}
+					{getTableRows()}
+				</table>
+				<div className="pagination-container">
+					<ul className="pagination">
+						{pageNumbers.map((number) => {
+							return (
+								<li
+									key={number}
+									id={number}
+									data-testid="page-links"
+									onClick={handlePageClick}
+									className={
+										currentPage === number ? "active" : null
+									}
+								>
+									{number}
+								</li>
+							);
+						})}
+					</ul>
 				</div>
-			)) ||
-				(loading && (
-					<div className="loading-container">
-						<h1>Loading...</h1>
-						<img
-							className="loading-gif"
-							src={loadingGif}
-							alt="loading"
-						/>
-					</div>
-				))}
+			</div>
+
+			<div
+				className="loading-container"
+				style={{
+					display: loading ? "block" : "none"
+				}}
+			>
+				<h1>Loading...</h1>
+				<img
+					data-testid="loading-gif"
+					className="loading-gif"
+					src={loadingGif}
+					alt="loading"
+				/>
+			</div>
 		</div>
 	);
 }
